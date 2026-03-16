@@ -1,0 +1,27 @@
+name: 同步源 & 部署
+
+on:
+  schedule:
+    - cron: '0 3 * * *'    # 每天 UTC 3:00 (北京时间 11:00)
+  workflow_dispatch:         # 手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Sync all sources
+        run: node check_tvbox.js sync
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --staged --quiet || git commit -m "🔄 同步源 $(date +%Y-%m-%d)"
+          git push
