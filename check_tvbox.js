@@ -1,18 +1,14 @@
 #!/usr/bin/env node
 /**
- * TVBox 多仓源管理工具 (Node.js 版)
+ * TVBox 多仓源管理工具
  *
- * 逻辑:
- *   源 URL → 请求数据
- *     ├── 能解析为 JSON (含 sites 或 storeHouse) → 存本地文件 → 多仓指向本地
- *     ├── HTML 页面 / 无法解析 → 存 URL → 多仓指向原始 URL (让 TVBox 处理)
- *     └── 完全无响应 → 标记为不可用
+ * 多仓格式: { "urls": [{ "url": "...", "name": "..." }] }
  *
  * 用法:
  *   node check_tvbox.js add <url> [-n name]   添加源
  *   node check_tvbox.js import urls.txt        批量导入
- *   node check_tvbox.js sync                   同步所有源（重新获取）
- *   node check_tvbox.js index                  生成多仓索引文件
+ *   node check_tvbox.js sync                   同步所有源
+ *   node check_tvbox.js index                  显示多仓文件内容
  *   node check_tvbox.js list                   列出已收录的源
  */
 
@@ -27,7 +23,6 @@ const BASE_DIR = __dirname;
 const SOURCES_DIR = path.join(BASE_DIR, 'sources');
 const INDEX_FILE = path.join(BASE_DIR, 'tvboxmuti.json');
 const TIMEOUT = 15000;
-// Vercel 部署地址（本地文件通过此 URL 提供访问）
 const BASE_URL = 'https://tvboxsource.vercel.app';
 
 // ============ 颜色 ============
@@ -77,40 +72,31 @@ function fetchRaw(url, timeout = TIMEOUT, maxRedirects = 5) {
 }
 
 /**
- * 获取源数据，返回:
- *   { type: 'json', data: {...} }         - 直接是 JSON
- *   { type: 'multi', data: {...} }        - 是多仓 JSON
- *   { type: 'url', detail: '...' }        - 不是 JSON，让 TVBox 自己处理
- *   null                                  - 完全无法访问
+ * 获取源数据
+ * 返回: { type: 'json'|'multi'|'url', data?, detail? } | null
  */
 async function fetchSource(url) {
   const result = await fetchRaw(url);
-  if (!result) return null;
-  if (result.status >= 400) return null;
+  if (!result || result.status >= 400) return null;
 
   const raw = result.data;
-
-  // 尝试直接解析 JSON
   try {
     const json = JSON.parse(raw);
-    if (json.storeHouse) return { type: 'multi', data: json };
+    if (json.urls || json.storeHouse) return { type: 'multi', data: json };
     if (json.sites) return { type: 'json', data: json };
-    // JSON 但格式未知
-    return { type: 'url', detail: 'JSON 但无 sites/storeHouse' };
+    return { type: 'url', detail: 'JSON 但无 sites/urls' };
   } catch {}
 
-  // 是 HTML → TVBox APP 可以自己解析导航页
   if (raw.includes('<html') || raw.includes('<!DOCTYPE') || raw.includes('<head')) {
     return { type: 'url', detail: 'HTML 导航页' };
   }
 
-  // 二进制数据（可能是藏了 JSON 的图片）
   const b64 = raw.match(/[A-Za-z0-9+\/]{200,}={0,2}/g);
   if (b64) {
     for (const m of b64) {
       try {
         const d = Buffer.from(m, 'base64').toString('utf8');
-        if (d.includes('"sites"')) return { type: 'url', detail: '嵌入式 JSON (需 APP 解析)' };
+        if (d.includes('"sites"')) return { type: 'url', detail: '嵌入式 JSON' };
       } catch {}
     }
   }
@@ -119,33 +105,31 @@ async function fetchSource(url) {
 }
 
 // ============ 索引管理 ============
-// 用 tvboxmuti.json 作为唯一的数据文件
-// TVBox 只读 sourceName + sourceUrl，其余字段是管理用的元数据
+// 格式: { "urls": [{ "url": "...", "name": "...", type?, localFile?, detail? }] }
 function getIndex() {
-  // 优先读 _meta.json（含管理元数据），没有则读 tvboxmuti.json
   const metaFile = path.join(BASE_DIR, '_meta.json');
   if (fs.existsSync(metaFile)) try { return JSON.parse(fs.readFileSync(metaFile, 'utf8')); } catch {}
   if (fs.existsSync(INDEX_FILE)) try { return JSON.parse(fs.readFileSync(INDEX_FILE, 'utf8')); } catch {}
-  return { storeHouse: [] };
+  return { urls: [] };
 }
+
 function saveIndex(index) {
-  // 生成给 TVBox 用的干净版本（只有 sourceName + sourceUrl）
+  // 给 TVBox 用的干净版本
   const tvboxFormat = {
-    storeHouse: index.storeHouse.map(item => ({
-      sourceName: item.sourceName,
-      sourceUrl: item.sourceType === 'local' && item.localFile
+    urls: (index.urls || []).map(item => ({
+      url: item.type === 'local' && item.localFile
         ? `${BASE_URL}/sources/${item.localFile}`
-        : item.sourceUrl
+        : item.url,
+      name: item.name
     }))
   };
   fs.writeFileSync(INDEX_FILE, JSON.stringify(tvboxFormat, null, 2), 'utf8');
 
-  // 管理元数据存到 _meta.json
-  const metaFile = path.join(BASE_DIR, '_meta.json');
-  fs.writeFileSync(metaFile, JSON.stringify(index, null, 2), 'utf8');
+  // 管理元数据
+  fs.writeFileSync(path.join(BASE_DIR, '_meta.json'), JSON.stringify(index, null, 2), 'utf8');
 }
 
-// ============ 核心: 添加源 ============
+// ============ 添加源 ============
 async function cmdAdd(url, name) {
   ensureDir(SOURCES_DIR);
   console.log(`${C.BOLD}处理: ${url}${C.END}`);
@@ -157,50 +141,45 @@ async function cmdAdd(url, name) {
   if (!sourceName) {
     try {
       const u = new URL(url);
-      // 解码 URL 编码的中文路径
       sourceName = decodeURIComponent(u.pathname.split('/').filter(Boolean).pop() || '');
       sourceName = sourceName.replace('.json', '') || u.hostname;
     } catch {
       sourceName = urlToId(url);
     }
   }
-  const index = getIndex();
 
-  // 检查是否已存在
-  if (index.storeHouse.some(i => i.sourceUrl === url)) {
+  const index = getIndex();
+  if (index.urls.some(i => i.url === url)) {
     log('warn', `已存在: ${sourceName}`);
     return true;
   }
 
   if (result.type === 'multi') {
-    // 多仓 → 递归处理每个子源
-    log('info', `多仓源, ${result.data.storeHouse.length} 个子源`);
-    for (const entry of result.data.storeHouse) {
-      const childUrl = entry.sourceUrl || entry.url;
-      const childName = entry.sourceName || entry.name || '未命名';
+    // 多仓 → 递归处理子源（兼容 urls 和 storeHouse 两种格式）
+    const entries = result.data.urls || result.data.storeHouse || [];
+    log('info', `多仓源, ${entries.length} 个子源`);
+    for (const entry of entries) {
+      const childUrl = entry.url || entry.sourceUrl;
+      const childName = entry.name || entry.sourceName || '未命名';
       if (childUrl) await cmdAdd(childUrl, childName);
     }
     return true;
   }
 
   if (result.type === 'json') {
-    // 单仓 JSON → 存本地文件
     const fname = `${safeName(sourceName)}_${urlToId(url)}.json`;
     fs.writeFileSync(path.join(SOURCES_DIR, fname), JSON.stringify(result.data, null, 2), 'utf8');
     const siteCount = result.data.sites?.length || 0;
     log('ok', `${sourceName} → 本地文件 (${siteCount} 站点)`);
-    index.storeHouse.push({
-      sourceName, sourceUrl: url, localFile: fname,
-      sourceType: 'local', siteCount,
-      addTime: new Date().toISOString()
+    index.urls.push({
+      url, name: sourceName, localFile: fname,
+      type: 'local', siteCount, addTime: new Date().toISOString()
     });
   } else {
-    // 非 JSON → 直接存 URL，让 TVBox APP 处理
     log('url', `${sourceName} → 直接使用 URL (${result.detail})`);
-    index.storeHouse.push({
-      sourceName, sourceUrl: url, localFile: null,
-      sourceType: 'remote', detail: result.detail,
-      addTime: new Date().toISOString()
+    index.urls.push({
+      url, name: sourceName,
+      type: 'remote', detail: result.detail, addTime: new Date().toISOString()
     });
   }
 
@@ -208,39 +187,38 @@ async function cmdAdd(url, name) {
   return true;
 }
 
-// ============ 同步（重新获取所有源）============
+// ============ 同步所有源 ============
 async function cmdSync() {
   const index = getIndex();
-  if (!index.storeHouse.length) { log('info', '索引为空'); return; }
+  if (!index.urls.length) { log('info', '索引为空'); return; }
 
-  console.log(`\n${C.BOLD}同步 ${index.storeHouse.length} 个源${C.END}`);
+  console.log(`\n${C.BOLD}同步 ${index.urls.length} 个源${C.END}`);
   console.log('='.repeat(60));
 
-  const newIndex = { storeHouse: [] };
-  for (const item of index.storeHouse) {
-    console.log(`\n${C.BOLD}${item.sourceName}${C.END}: ${item.sourceUrl}`);
-    const result = await fetchSource(item.sourceUrl);
+  const newIndex = { urls: [] };
+  for (const item of index.urls) {
+    console.log(`\n${C.BOLD}${item.name}${C.END}: ${item.url}`);
+    const result = await fetchSource(item.url);
 
     if (!result) {
       log('fail', '无法访问, 跳过');
-      // 保留原记录但标记失效
-      newIndex.storeHouse.push({ ...item, status: 'unreachable' });
+      newIndex.urls.push({ ...item, status: 'unreachable' });
       continue;
     }
 
     if (result.type === 'json') {
-      const fname = item.localFile || `${safeName(item.sourceName)}_${urlToId(item.sourceUrl)}.json`;
+      const fname = item.localFile || `${safeName(item.name)}_${urlToId(item.url)}.json`;
       fs.writeFileSync(path.join(SOURCES_DIR, fname), JSON.stringify(result.data, null, 2), 'utf8');
       const siteCount = result.data.sites?.length || 0;
-      log('ok', `本地文件已更新 (${siteCount} 站点)`);
-      newIndex.storeHouse.push({
-        ...item, localFile: fname, sourceType: 'local',
+      log('ok', `已更新 (${siteCount} 站点)`);
+      newIndex.urls.push({
+        ...item, localFile: fname, type: 'local',
         siteCount, lastSync: new Date().toISOString()
       });
     } else {
       log('url', `远程 URL (${result.detail})`);
-      newIndex.storeHouse.push({
-        ...item, sourceType: 'remote',
+      newIndex.urls.push({
+        ...item, type: 'remote',
         detail: result.detail, lastSync: new Date().toISOString()
       });
     }
@@ -250,21 +228,19 @@ async function cmdSync() {
   console.log(`\n${C.G}同步完成${C.END}\n`);
 }
 
-// ============ 显示多仓文件内容 ============
+// ============ 显示多仓内容 ============
 function cmdIndex() {
   const index = getIndex();
-  if (!index.storeHouse.length) { log('info', '索引为空'); return; }
+  if (!index.urls.length) { log('info', '索引为空'); return; }
 
-  console.log(`\n${C.BOLD}tvboxmuti.json 内容 (${index.storeHouse.length} 个源)${C.END}`);
+  console.log(`\n${C.BOLD}tvboxmuti.json (${index.urls.length} 个源)${C.END}`);
   console.log('='.repeat(60));
-
-  for (const item of index.storeHouse) {
-    const url = item.sourceType === 'local' && item.localFile
-      ? `sources/${item.localFile}`
-      : item.sourceUrl;
-    const type = item.sourceType === 'local' ? `(${item.siteCount || '?'}站)` : '(远程)';
-    log(item.sourceType === 'local' ? 'info' : 'url',
-        `${item.sourceName} → ${url} ${type}`);
+  for (const item of index.urls) {
+    const url = item.type === 'local' && item.localFile
+      ? `${BASE_URL}/sources/${item.localFile}`
+      : item.url;
+    const type = item.type === 'local' ? `(${item.siteCount || '?'}站)` : '(远程)';
+    log(item.type === 'local' ? 'info' : 'url', `${item.name} → ${url} ${type}`);
   }
   console.log();
 }
@@ -272,14 +248,14 @@ function cmdIndex() {
 // ============ 列出源 ============
 function cmdList() {
   const index = getIndex();
-  if (!index.storeHouse.length) { log('info', '暂无收录的源'); return; }
-  console.log(`\n${C.BOLD}已收录 ${index.storeHouse.length} 个源:${C.END}`);
+  if (!index.urls.length) { log('info', '暂无收录的源'); return; }
+  console.log(`\n${C.BOLD}已收录 ${index.urls.length} 个源:${C.END}`);
   console.log('='.repeat(60));
-  index.storeHouse.forEach((item, i) => {
-    const type = item.sourceType === 'local' ? `[本地 ${item.siteCount || '?'}站]` : '[远程]';
+  index.urls.forEach((item, i) => {
+    const type = item.type === 'local' ? `[本地 ${item.siteCount || '?'}站]` : '[远程]';
     const status = item.status === 'unreachable' ? ` ${C.R}(失效)${C.END}` : '';
-    console.log(`  ${i + 1}. ${C.BOLD}${item.sourceName}${C.END} ${type}${status}`);
-    console.log(`     ${C.D}${item.sourceUrl}${C.END}`);
+    console.log(`  ${i + 1}. ${C.BOLD}${item.name}${C.END} ${type}${status}`);
+    console.log(`     ${C.D}${item.url}${C.END}`);
   });
   console.log();
 }
@@ -297,13 +273,10 @@ async function main() {
     case 'import': {
       if (!args[0]) { console.log('用法: node check_tvbox.js import urls.txt'); return; }
       const entries = fs.readFileSync(args[0], 'utf8').split('\n')
-        .map(l => l.trim())
-        .filter(l => l && !l.startsWith('#'))
+        .map(l => l.trim()).filter(l => l && !l.startsWith('#'))
         .map(l => {
           const hashIdx = l.indexOf('#');
-          if (hashIdx > 0) {
-            return { url: l.slice(0, hashIdx).trim(), name: l.slice(hashIdx + 1).trim() };
-          }
+          if (hashIdx > 0) return { url: l.slice(0, hashIdx).trim(), name: l.slice(hashIdx + 1).trim() };
           return { url: l, name: undefined };
         });
       log('info', `共 ${entries.length} 个 URL`);
@@ -313,15 +286,9 @@ async function main() {
       }
       break;
     }
-    case 'sync':
-      await cmdSync();
-      break;
-    case 'index':
-      cmdIndex();
-      break;
-    case 'list':
-      cmdList();
-      break;
+    case 'sync': await cmdSync(); break;
+    case 'index': cmdIndex(); break;
+    case 'list': cmdList(); break;
     default:
       console.log(`TVBox 多仓源管理工具
 
@@ -329,7 +296,7 @@ async function main() {
   node check_tvbox.js add <url> [-n name]   添加源
   node check_tvbox.js import urls.txt        批量导入
   node check_tvbox.js sync                   同步所有源
-  node check_tvbox.js index                  生成多仓索引
+  node check_tvbox.js index                  显示多仓内容
   node check_tvbox.js list                   列出已收录的源`);
   }
 }
