@@ -27,6 +27,8 @@ const BASE_DIR = __dirname;
 const SOURCES_DIR = path.join(BASE_DIR, 'sources');
 const INDEX_FILE = path.join(BASE_DIR, 'tvboxmuti.json');
 const TIMEOUT = 15000;
+// Vercel 部署地址（本地文件通过此 URL 提供访问）
+const BASE_URL = 'https://tvboxsource.vercel.app';
 
 // ============ 颜色 ============
 const C = {
@@ -132,7 +134,7 @@ function saveIndex(index) {
     storeHouse: index.storeHouse.map(item => ({
       sourceName: item.sourceName,
       sourceUrl: item.sourceType === 'local' && item.localFile
-        ? `sources/${item.localFile}`
+        ? `${BASE_URL}/sources/${item.localFile}`
         : item.sourceUrl
     }))
   };
