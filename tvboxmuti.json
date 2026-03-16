@@ -1,0 +1,40 @@
+{
+  "storeHouse": [
+    {
+      "sourceName": "宝盒接口",
+      "sourceUrl": "http://宝盒接口.top"
+    },
+    {
+      "sourceName": "影视仓接口",
+      "sourceUrl": "http://影视仓接口.top"
+    },
+    {
+      "sourceName": "饭太硬",
+      "sourceUrl": "http://www.饭太硬.net/tv"
+    },
+    {
+      "sourceName": "玩偶接口",
+      "sourceUrl": "sources/玩偶接口_7aa2b4cb.json"
+    },
+    {
+      "sourceName": "肥猫接口",
+      "sourceUrl": "http://肥猫.com"
+    },
+    {
+      "sourceName": "天微七星",
+      "sourceUrl": "sources/天微七星_5595e661.json"
+    },
+    {
+      "sourceName": "戏曲接口",
+      "sourceUrl": "http://mzrjk.top/唱戏"
+    },
+    {
+      "sourceName": "学习接口",
+      "sourceUrl": "http://mzrjk.top/智教"
+    },
+    {
+      "sourceName": "音乐接口",
+      "sourceUrl": "http://mzrjk.top/听歌"
+    }
+  ]
+}

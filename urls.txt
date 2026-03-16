@@ -1,0 +1,14 @@
+# TVBox 源地址列表
+# 格式: URL # 名称 (名称可选)
+
+http://宝盒接口.top # 宝盒接口
+http://影视仓接口.top # 影视仓接口
+http://www.饭太硬.net/tv # 饭太硬
+https://gitee.com/blssss/jk/raw/api/bls.json # 玩偶接口
+http://我不是.摸鱼儿.xyz # 摸鱼接口
+http://肥猫.com # 肥猫接口
+http://ok321.top/tv # OK接口
+http://7337.kstore.space/qxys/禁止传播.json # 天微七星
+http://mzrjk.top/唱戏 # 戏曲接口
+http://mzrjk.top/智教 # 学习接口
+http://mzrjk.top/听歌 # 音乐接口
