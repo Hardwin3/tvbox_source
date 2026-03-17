@@ -23,7 +23,7 @@ const BASE_DIR = __dirname;
 const SOURCES_DIR = path.join(BASE_DIR, 'sources');
 const INDEX_FILE = path.join(BASE_DIR, 'tvboxmuti.json');
 const TIMEOUT = 15000;
-const BASE_URL = 'https://tvboxsource.vercel.app';
+const BASE_URL = 'https://tvbox.vanspark.fun';
 
 // ============ 颜色 ============
 const C = {
