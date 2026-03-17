@@ -286,6 +286,36 @@ async function main() {
       }
       break;
     }
+    case 'update': {
+      // 一键更新: 从 urls.txt 导入新源 + 同步所有源
+      const urlsFile = path.join(BASE_DIR, 'urls.txt');
+      if (fs.existsSync(urlsFile)) {
+        const index = getIndex();
+        const existingUrls = new Set((index.urls || []).map(i => i.url));
+        const entries = fs.readFileSync(urlsFile, 'utf8').split('\n')
+          .map(l => l.trim()).filter(l => l && !l.startsWith('#'))
+          .map(l => {
+            const hashIdx = l.indexOf('#');
+            if (hashIdx > 0) return { url: l.slice(0, hashIdx).trim(), name: l.slice(hashIdx + 1).trim() };
+            return { url: l, name: undefined };
+          });
+
+        const newEntries = entries.filter(e => !existingUrls.has(e.url));
+        if (newEntries.length > 0) {
+          console.log(`\n${C.BOLD}📥 发现 ${newEntries.length} 个新源${C.END}`);
+          for (const entry of newEntries) {
+            await cmdAdd(entry.url, entry.name);
+          }
+        } else {
+          console.log(`\n${C.G}✓ urls.txt 中没有新源${C.END}`);
+        }
+      }
+      // 同步所有源
+      await cmdSync();
+      // 显示结果
+      cmdList();
+      break;
+    }
     case 'sync': await cmdSync(); break;
     case 'index': cmdIndex(); break;
     case 'list': cmdList(); break;
@@ -293,11 +323,12 @@ async function main() {
       console.log(`TVBox 多仓源管理工具
 
 用法:
-  node check_tvbox.js add <url> [-n name]   添加源
-  node check_tvbox.js import urls.txt        批量导入
-  node check_tvbox.js sync                   同步所有源
-  node check_tvbox.js index                  显示多仓内容
-  node check_tvbox.js list                   列出已收录的源`);
+  node check_tvbox.js update                   一键更新 (导入新源+同步所有)
+  node check_tvbox.js add <url> [-n name]      添加源
+  node check_tvbox.js import urls.txt          批量导入
+  node check_tvbox.js sync                     同步所有源
+  node check_tvbox.js index                    显示多仓内容
+  node check_tvbox.js list                     列出已收录的源`);
   }
 }
 
