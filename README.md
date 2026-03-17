@@ -6,7 +6,7 @@
 
 在 TVBox 中添加多仓地址：
 ```
-https://tvboxsource.vercel.app/tvboxmuti.json
+https://tvbox.vanspark.fun/tvboxmuti.json
 ```
 
 ## 结构
@@ -116,7 +116,7 @@ node check_tvbox.js list
 
 ## 自动同步
 
-GitHub Actions 每天 UTC 3:00（北京时间 11:00）自动运行 `sync`，更新所有源的本地备份。
+GitHub Actions 每天 UTC 19:00（北京时间凌晨 3:00）自动运行 `sync`，更新所有源的本地备份。
 
 ## Vercel 部署
 
