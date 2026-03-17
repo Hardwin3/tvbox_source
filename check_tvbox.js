@@ -44,6 +44,75 @@ function urlToId(url) {
 }
 function safeName(name) { return name.replace(/[^\w\u4e00-\u9fff\-]/g, '_').slice(0, 40); }
 
+// 检测 JSON 中的相对路径依赖 (./xxx 开头的值)
+function findRelativePaths(obj, paths = new Set()) {
+  if (typeof obj === 'string') {
+    if (obj.startsWith('./')) paths.add(obj);
+  } else if (Array.isArray(obj)) {
+    obj.forEach(item => findRelativePaths(item, paths));
+  } else if (obj && typeof obj === 'object') {
+    Object.values(obj).forEach(val => findRelativePaths(val, paths));
+  }
+  return paths;
+}
+
+// 获取 URL 的基础路径 (去掉文件名，保留目录)
+function getBaseUrl(url) {
+  const idx = url.lastIndexOf('/');
+  return idx > 8 ? url.substring(0, idx + 1) : url + '/';
+}
+
+// 下载文件到本地
+async function downloadFile(url, localPath) {
+  const result = await fetchRaw(url, 30000);
+  if (!result || result.status >= 400) return false;
+  const ext = path.extname(localPath).toLowerCase();
+  const isBinary = ['.jar', '.so', '.dex', '.zip'].includes(ext);
+  fs.writeFileSync(localPath, isBinary ? Buffer.from(result.data, 'binary') : result.data, isBinary ? null : 'utf8');
+  return true;
+}
+
+// 本地化 JSON 源的依赖文件
+async function localizeSource(url, name, jsonData) {
+  const deps = findRelativePaths(jsonData);
+  if (deps.size === 0) return { data: jsonData, localized: false };
+
+  const dirName = safeName(name) + '_' + urlToId(url);
+  const subDir = path.join(SOURCES_DIR, dirName);
+  ensureDir(subDir);
+
+  const baseUrl = getBaseUrl(url);
+  let ok = 0, fail = 0;
+
+  for (const relPath of deps) {
+    // 去掉 ./ 前缀，拼出完整 URL
+    const cleanPath = relPath.replace(/^\.\//, '');
+    const fullUrl = baseUrl + cleanPath;
+    const localFile = path.join(subDir, cleanPath);
+
+    ensureDir(path.dirname(localFile));
+    console.log(`    ⬇ ${cleanPath}`);
+
+    const success = await downloadFile(fullUrl, localFile);
+    if (success) {
+      const size = fs.statSync(localFile).size;
+      console.log(`      ✓ ${(size / 1024).toFixed(1)} KB`);
+      ok++;
+    } else {
+      console.log(`      ✗ 下载失败`);
+      fail++;
+    }
+  }
+
+  // 改写 JSON 中的相对路径: ./xxx → ./dirName/xxx
+  let jsonStr = JSON.stringify(jsonData);
+  jsonStr = jsonStr.replace(/"\.\/([^"]+)"/g, `"./${dirName}/$1"`);
+  const newData = JSON.parse(jsonStr);
+
+  log('info', `依赖: ${ok} 成功, ${fail} 失败`);
+  return { data: newData, localized: true };
+}
+
 // ============ HTTP 请求（跟随重定向）============
 function fetchRaw(url, timeout = TIMEOUT, maxRedirects = 5) {
   return new Promise((resolve) => {
@@ -130,7 +199,8 @@ function saveIndex(index) {
 }
 
 // ============ 添加源 ============
-async function cmdAdd(url, name) {
+async function cmdAdd(url, name, options = {}) {
+  const { localize = false } = options;
   ensureDir(SOURCES_DIR);
   console.log(`${C.BOLD}处理: ${url}${C.END}`);
 
@@ -161,20 +231,45 @@ async function cmdAdd(url, name) {
     for (const entry of entries) {
       const childUrl = entry.url || entry.sourceUrl;
       const childName = entry.name || entry.sourceName || '未命名';
-      if (childUrl) await cmdAdd(childUrl, childName);
+      if (childUrl) await cmdAdd(childUrl, childName, options);
     }
     return true;
   }
 
   if (result.type === 'json') {
-    const fname = `${safeName(sourceName)}_${urlToId(url)}.json`;
-    fs.writeFileSync(path.join(SOURCES_DIR, fname), JSON.stringify(result.data, null, 2), 'utf8');
-    const siteCount = result.data.sites?.length || 0;
-    log('ok', `${sourceName} → 本地文件 (${siteCount} 站点)`);
-    index.urls.push({
-      url, name: sourceName, localFile: fname,
-      type: 'local', siteCount, addTime: new Date().toISOString()
-    });
+    const deps = findRelativePaths(result.data);
+    const hasDeps = deps.size > 0;
+
+    if (hasDeps && !localize) {
+      // 有依赖但没开本地化 → 当作远程 URL
+      log('url', `${sourceName} → 远程 URL (${deps.size} 个依赖, 需 --localize 本地化)`);
+      index.urls.push({
+        url, name: sourceName,
+        type: 'remote', detail: `含 ${deps.size} 个依赖文件`, addTime: new Date().toISOString()
+      });
+    } else if (hasDeps && localize) {
+      // 有依赖且开了本地化 → 下载依赖 + 改路径
+      log('info', `${sourceName} → 本地化 (${deps.size} 个依赖)`);
+      const { data: newData } = await localizeSource(url, sourceName, result.data);
+      const fname = `${safeName(sourceName)}_${urlToId(url)}.json`;
+      fs.writeFileSync(path.join(SOURCES_DIR, fname), JSON.stringify(newData, null, 2), 'utf8');
+      const siteCount = newData.sites?.length || 0;
+      log('ok', `已保存 (${siteCount} 站点)`);
+      index.urls.push({
+        url, name: sourceName, localFile: fname,
+        type: 'local', siteCount, localized: true, addTime: new Date().toISOString()
+      });
+    } else {
+      // 无依赖 → 直接本地化
+      const fname = `${safeName(sourceName)}_${urlToId(url)}.json`;
+      fs.writeFileSync(path.join(SOURCES_DIR, fname), JSON.stringify(result.data, null, 2), 'utf8');
+      const siteCount = result.data.sites?.length || 0;
+      log('ok', `${sourceName} → 本地文件 (${siteCount} 站点)`);
+      index.urls.push({
+        url, name: sourceName, localFile: fname,
+        type: 'local', siteCount, addTime: new Date().toISOString()
+      });
+    }
   } else {
     log('url', `${sourceName} → 直接使用 URL (${result.detail})`);
     index.urls.push({
@@ -188,7 +283,8 @@ async function cmdAdd(url, name) {
 }
 
 // ============ 同步所有源 ============
-async function cmdSync() {
+async function cmdSync(options = {}) {
+  const { localize = false } = options;
   const index = getIndex();
   if (!index.urls.length) { log('info', '索引为空'); return; }
 
@@ -207,14 +303,40 @@ async function cmdSync() {
     }
 
     if (result.type === 'json') {
-      const fname = item.localFile || `${safeName(item.name)}_${urlToId(item.url)}.json`;
-      fs.writeFileSync(path.join(SOURCES_DIR, fname), JSON.stringify(result.data, null, 2), 'utf8');
-      const siteCount = result.data.sites?.length || 0;
-      log('ok', `已更新 (${siteCount} 站点)`);
-      newIndex.urls.push({
-        ...item, localFile: fname, type: 'local',
-        siteCount, lastSync: new Date().toISOString()
-      });
+      const deps = findRelativePaths(result.data);
+      const hasDeps = deps.size > 0;
+      const wasLocalized = item.localized === true;
+
+      if (hasDeps && !localize && !wasLocalized) {
+        // 有依赖，没开本地化，之前也没本地化 → 远程
+        log('url', `远程 URL (${deps.size} 个依赖)`);
+        newIndex.urls.push({
+          ...item, type: 'remote',
+          detail: `含 ${deps.size} 个依赖文件`, lastSync: new Date().toISOString()
+        });
+      } else if (hasDeps && (localize || wasLocalized)) {
+        // 有依赖，开本地化 或 之前已本地化 → 更新本地
+        log('info', `更新本地化 (${deps.size} 个依赖)`);
+        const { data: newData } = await localizeSource(item.url, item.name, result.data);
+        const fname = item.localFile || `${safeName(item.name)}_${urlToId(item.url)}.json`;
+        fs.writeFileSync(path.join(SOURCES_DIR, fname), JSON.stringify(newData, null, 2), 'utf8');
+        const siteCount = newData.sites?.length || 0;
+        log('ok', `已更新 (${siteCount} 站点)`);
+        newIndex.urls.push({
+          ...item, localFile: fname, type: 'local', localized: true,
+          siteCount, lastSync: new Date().toISOString()
+        });
+      } else {
+        // 无依赖 → 直接本地化
+        const fname = item.localFile || `${safeName(item.name)}_${urlToId(item.url)}.json`;
+        fs.writeFileSync(path.join(SOURCES_DIR, fname), JSON.stringify(result.data, null, 2), 'utf8');
+        const siteCount = result.data.sites?.length || 0;
+        log('ok', `已更新 (${siteCount} 站点)`);
+        newIndex.urls.push({
+          ...item, localFile: fname, type: 'local',
+          siteCount, lastSync: new Date().toISOString()
+        });
+      }
     } else {
       log('url', `远程 URL (${result.detail})`);
       newIndex.urls.push({
@@ -262,16 +384,22 @@ function cmdList() {
 
 // ============ 主入口 ============
 async function main() {
-  const [,, cmd, ...args] = process.argv;
+  const [,, cmd, ...rawArgs] = process.argv;
+  const localize = rawArgs.includes('--localize') || rawArgs.includes('-l');
+  const args = rawArgs.filter(a => a !== '--localize' && a !== '-l');
+  const opts = { localize };
+
+  if (localize) console.log(`${C.Y}⚡ 本地化模式: 会下载依赖文件${C.END}`);
+
   switch (cmd) {
     case 'add': {
-      if (!args[0]) { console.log('用法: node check_tvbox.js add <url> [-n name]'); return; }
+      if (!args[0]) { console.log('用法: node check_tvbox.js add <url> [-n name] [--localize]'); return; }
       const ni = args.indexOf('-n');
-      await cmdAdd(args[0], ni >= 0 ? args[ni + 1] : undefined);
+      await cmdAdd(args[0], ni >= 0 ? args[ni + 1] : undefined, opts);
       break;
     }
     case 'import': {
-      if (!args[0]) { console.log('用法: node check_tvbox.js import urls.txt'); return; }
+      if (!args[0]) { console.log('用法: node check_tvbox.js import urls.txt [--localize]'); return; }
       const entries = fs.readFileSync(args[0], 'utf8').split('\n')
         .map(l => l.trim()).filter(l => l && !l.startsWith('#'))
         .map(l => {
@@ -282,7 +410,7 @@ async function main() {
       log('info', `共 ${entries.length} 个 URL`);
       for (let i = 0; i < entries.length; i++) {
         console.log(`\n${C.BOLD}[${i + 1}/${entries.length}]${C.END}`);
-        await cmdAdd(entries[i].url, entries[i].name);
+        await cmdAdd(entries[i].url, entries[i].name, opts);
       }
       break;
     }
@@ -304,31 +432,34 @@ async function main() {
         if (newEntries.length > 0) {
           console.log(`\n${C.BOLD}📥 发现 ${newEntries.length} 个新源${C.END}`);
           for (const entry of newEntries) {
-            await cmdAdd(entry.url, entry.name);
+            await cmdAdd(entry.url, entry.name, opts);
           }
         } else {
           console.log(`\n${C.G}✓ urls.txt 中没有新源${C.END}`);
         }
       }
       // 同步所有源
-      await cmdSync();
+      await cmdSync(opts);
       // 显示结果
       cmdList();
       break;
     }
-    case 'sync': await cmdSync(); break;
+    case 'sync': await cmdSync(opts); break;
     case 'index': cmdIndex(); break;
     case 'list': cmdList(); break;
     default:
       console.log(`TVBox 多仓源管理工具
 
 用法:
-  node check_tvbox.js update                   一键更新 (导入新源+同步所有)
-  node check_tvbox.js add <url> [-n name]      添加源
-  node check_tvbox.js import urls.txt          批量导入
-  node check_tvbox.js sync                     同步所有源
-  node check_tvbox.js index                    显示多仓内容
-  node check_tvbox.js list                     列出已收录的源`);
+  node check_tvbox.js update [--localize]         一键更新 (导入新源+同步所有)
+  node check_tvbox.js add <url> [-n name] [--localize]  添加源
+  node check_tvbox.js import urls.txt [--localize]      批量导入
+  node check_tvbox.js sync [--localize]                 同步所有源
+  node check_tvbox.js index                             显示多仓内容
+  node check_tvbox.js list                              列出已收录的源
+
+选项:
+  --localize, -l    本地化含依赖的JSON源(下载jar/js/json等依赖文件)`);
   }
 }
 
