@@ -13,3 +13,4 @@ http://mzrjk.top/唱戏 # 戏曲接口
 http://mzrjk.top/智教 # 学习接口
 http://mzrjk.top/听歌 # 音乐接口
 http://121.5.174.58:1212/wdjzp0125.json #老哥接口
+https://xn--hzzh-wn6lw489o.v.nxog.top/apib.php?id=3 #老哥接口1
