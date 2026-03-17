@@ -2,7 +2,7 @@ name: 同步源 & 部署
 
 on:
   schedule:
-    - cron: '0 3 * * *'    # 每天 UTC 3:00 (北京时间 11:00)
+    - cron: '0 19 * * *'   # 每天 UTC 19:00 (北京时间凌晨 3:00)
   workflow_dispatch:         # 手动触发
 
 jobs:
