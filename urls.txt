@@ -12,3 +12,4 @@ http://7337.kstore.space/qxys/禁止传播.json # 天微七星
 http://mzrjk.top/唱戏 # 戏曲接口
 http://mzrjk.top/智教 # 学习接口
 http://mzrjk.top/听歌 # 音乐接口
+http://121.5.174.58:1212/wdjzp0125.json #老哥接口

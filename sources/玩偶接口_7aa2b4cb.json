@@ -4,45 +4,45 @@
       "key": "豆瓣",
       "name": "🏠┃更多福利接口关注┃公众号：玩偶软件",
       "type": 3,
-      "api": "./玩偶接口/lib/drpy2.min.js",
+      "api": "./玩偶接口_7aa2b4cb/lib/drpy2.min.js",
       "searchable": 0,
       "changeable": 1,
-      "ext": "./玩偶接口/lib/douban.js"
+      "ext": "./玩偶接口_7aa2b4cb/lib/douban.js"
     },
     {
       "key": "XBPQ_免费",
       "name": "🚀秒播┃影视",
       "type": 3,
       "api": "csp_XBPQ",
-      "ext": "./玩偶接口/lib/zeqaht.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/zeqaht.json"
     },
     {
       "key": "XBPQ_白嫖",
       "name": "🛍️白嫖┃影视",
       "type": 3,
       "api": "csp_XBPQ",
-      "ext": "./玩偶接口/lib/baipiaoys.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/baipiaoys.json"
     },
     {
       "key": "XBPQ_4kvm",
       "name": "🥭五楼┃影视",
       "type": 3,
       "api": "csp_XBPQ",
-      "ext": "./玩偶接口/lib/4kvm.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/4kvm.json"
     },
     {
       "key": "XBPQ_南坊",
       "name": "🏠南坊┃影视",
       "type": 3,
       "api": "csp_XBPQ",
-      "ext": "./玩偶接口/lib/南坊.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/南坊.json"
     },
     {
       "key": "XBPQ_黑木耳",
       "name": "♠️黑木耳┃影视",
       "type": 3,
       "api": "csp_XBPQ",
-      "ext": "./玩偶接口/lib/heimuer.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/heimuer.json"
     },
     {
       "key": "cjzy_360资源",
@@ -84,43 +84,43 @@
       "key": "drpy_365",
       "name": " 📡365┃影视",
       "type": 3,
-      "api": "./玩偶接口/lib/drpy2.min.js",
-      "ext": "./玩偶接口/lib/365.js"
+      "api": "./玩偶接口_7aa2b4cb/lib/drpy2.min.js",
+      "ext": "./玩偶接口_7aa2b4cb/lib/365.js"
     },
     {
       "key": "XYQH_素白白",
       "name": "🏠素白┃慎用",
       "type": 3,
       "api": "csp_XYQHiker",
-      "ext": "./玩偶接口/lib/素白白.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/素白白.json"
     },
     {
       "key": "XBPQ_98影视",
       "name": "🍸酒吧┃影视",
       "type": 3,
       "api": "csp_XBPQ",
-      "ext": "./玩偶接口/lib/98影视.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/98影视.json"
     },
     {
       "key": "XBPQ_黑狐",
       "name": "🦝黑狐┃影视",
       "type": 3,
       "api": "csp_XBPQ",
-      "ext": "./玩偶接口/lib/黑狐影视.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/黑狐影视.json"
     },
     {
       "key": "XBPQ_2BT",
       "name": "🤥鼻涕┃影视",
       "type": 3,
       "api": "csp_XBPQ",
-      "ext": "./玩偶接口/lib/2bt.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/2bt.json"
     },
     {
       "key": "drpy_好看",
       "name": "👀好看┃影视",
       "type": 3,
-      "api": "./玩偶接口/lib/drpy2.min.js",
-      "ext": "./玩偶接口/lib/好看.js"
+      "api": "./玩偶接口_7aa2b4cb/lib/drpy2.min.js",
+      "ext": "./玩偶接口_7aa2b4cb/lib/好看.js"
     },
     {
       "key": "XBPQ_榜—",
@@ -138,7 +138,7 @@
       "name": "🚌巴士┃动漫",
       "type": 3,
       "api": "csp_XBPQ",
-      "ext": "./玩偶接口/lib/dm84.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/dm84.json"
     },
     {
       "key": "csp_New6v",
@@ -154,36 +154,36 @@
       "searchable": 2,
       "quickSearch": 0,
       "filterable": 0,
-      "api": "./玩偶接口/lib/live2mv.js",
-      "ext": "./玩偶接口/lib/zb.json"
+      "api": "./玩偶接口_7aa2b4cb/lib/live2mv.js",
+      "ext": "./玩偶接口_7aa2b4cb/lib/zb.json"
     },
     {
       "key": "drpy_好趣网",
       "name": "📺好趣┃直播",
       "type": 3,
-      "api": "./玩偶接口/lib/drpy2.min.js",
-      "ext": "./玩偶接口/lib/好趣网.js"
+      "api": "./玩偶接口_7aa2b4cb/lib/drpy2.min.js",
+      "ext": "./玩偶接口_7aa2b4cb/lib/好趣网.js"
     },
     {
       "key": "XYQH_电影港",
       "name": "🏠影港┃慎用",
       "type": 3,
       "api": "csp_XYQHikerAL",
-      "ext": "./玩偶接口/lib/电影港.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/电影港.json"
     },
     {
       "key": "XBPQ_wo4K",
       "name": "🛣️顶级┃慎用",
       "type": 3,
       "api": "csp_XBPQ",
-      "ext": "./玩偶接口/lib/wo4K.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/wo4K.json"
     },
     {
       "key": "XBPQ_天堂",
       "name": "🏞️天堂┃电影",
       "type": 3,
       "api": "csp_XBPQ",
-      "ext": "./玩偶接口/lib/电影天堂.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/电影天堂.json"
     },
     {
       "key": "csp_Mp4Mov",
@@ -197,7 +197,7 @@
       "type": 3,
       "api": "csp_XYQHikerAL",
       "playerType": 1,
-      "ext": "./玩偶接口/lib/影搜.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/影搜.json"
     },
     {
       "key": "XYQH_聚合",
@@ -205,7 +205,7 @@
       "type": 3,
       "api": "csp_XYQHikerAL",
       "playerType": 1,
-      "ext": "./玩偶接口/lib/聚合网盘.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/聚合网盘.json"
     },
     {
       "key": "XYQH_云盘",
@@ -213,7 +213,7 @@
       "type": 3,
       "api": "csp_XYQHikerAL",
       "playerType": 1,
-      "ext": "./玩偶接口/lib/yunpan.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/yunpan.json"
     },
     {
       "key": "XYQH_土豆",
@@ -221,7 +221,7 @@
       "type": 3,
       "vip_thread_limit": 10,
       "api": "csp_XYQHikerAL",
-      "ext": "./玩偶接口/lib/土豆.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/土豆.json"
     },
     {
       "key": "csp_Tudou",
@@ -229,14 +229,14 @@
       "type": 3,
       "api": "csp_Tudou",
       "ext": "77c9aa84a92e4963a47f5e2bdb7d48b9",
-      "jar": "./玩偶接口/lib/tudou.jar;md5;2c46018d3be585009ec6680d420c88b2"
+      "jar": "./玩偶接口_7aa2b4cb/lib/tudou.jar;md5;2c46018d3be585009ec6680d420c88b2"
     },
     {
       "key": "csp_KungFu404",
       "name": "⚙阿里┃设置",
       "type": 3,
       "api": "csp_KungFu404",
-      "jar": "./玩偶接口/lib/ali.jar;md5;19dd113a118d02f8dcb989855aaf3a06"
+      "jar": "./玩偶接口_7aa2b4cb/lib/ali.jar;md5;19dd113a118d02f8dcb989855aaf3a06"
     },
     {
       "key": "csp_Yisou",
@@ -258,21 +258,21 @@
       "type": 3,
       "playerType": 1,
       "api": "csp_XYQHiker",
-      "ext": "./玩偶接口/lib/盘搜.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/盘搜.json"
     },
     {
       "key": "drpy_vip",
       "name": "💳威鸭屁┃影视",
       "type": 3,
-      "api": "./玩偶接口/lib/drpy2.min.js",
-      "ext": "./玩偶接口/lib/tvbox29.js"
+      "api": "./玩偶接口_7aa2b4cb/lib/drpy2.min.js",
+      "ext": "./玩偶接口_7aa2b4cb/lib/tvbox29.js"
     },
     {
       "key": " bili_道长哔哩",
       "name": "👨‍💻哔哩┃通用",
       "type": 3,
-      "api": "./玩偶接口/lib/drpy2.min.js",
-      "ext": "./玩偶接口/lib/我的哔哩.js"
+      "api": "./玩偶接口_7aa2b4cb/lib/drpy2.min.js",
+      "ext": "./玩偶接口_7aa2b4cb/lib/我的哔哩.js"
     },
     {
       "key": "相声",
@@ -285,7 +285,7 @@
       },
       "quickSearch": 0,
       "api": "csp_XBPQ",
-      "ext": "./玩偶接口/lib/相声随身听.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/相声随身听.json"
     },
     {
       "key": "评书",
@@ -298,15 +298,15 @@
       },
       "quickSearch": 0,
       "api": "csp_XBPQ",
-      "ext": "./玩偶接口/lib/评书.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/评书.json"
     },
     {
       "key": "appys_影探",
       "name": "🍝影探┃影视",
       "type": 3,
-      "api": "./玩偶接口/lib/drpy2.min.js",
+      "api": "./玩偶接口_7aa2b4cb/lib/drpy2.min.js",
       "playerType": 1,
-      "ext": "./玩偶接口/lib/lyyytv.js"
+      "ext": "./玩偶接口_7aa2b4cb/lib/lyyytv.js"
     },
     {
       "key": "app_嘛艺",
@@ -333,15 +333,15 @@
       "key": "drpy_爱迪",
       "name": "🆔爱迪┃影视",
       "type": 3,
-      "api": "./玩偶接口/lib/drpy2.min.js",
-      "ext": "./玩偶接口/lib/A8音乐.js"
+      "api": "./玩偶接口_7aa2b4cb/lib/drpy2.min.js",
+      "ext": "./玩偶接口_7aa2b4cb/lib/A8音乐.js"
     },
     {
       "key": "drpy_网飞",
       "name": "🥅网飞┃影视",
       "type": 3,
-      "api": "./玩偶接口/lib/drpy2.min.js",
-      "ext": "./玩偶接口/lib/网飞.js"
+      "api": "./玩偶接口_7aa2b4cb/lib/drpy2.min.js",
+      "ext": "./玩偶接口_7aa2b4cb/lib/网飞.js"
     },
     {
       "key": "appys_4kgod6",
@@ -357,7 +357,7 @@
       "type": 3,
       "api": "csp_XYQHikerAL",
       "playerType": 1,
-      "ext": "./玩偶接口/lib/wog1.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/wog1.json"
     },
     {
       "key": "XYQHAL_Wog2",
@@ -365,7 +365,7 @@
       "type": 3,
       "api": "csp_XYQHikerAL",
       "playerType": 1,
-      "ext": "./玩偶接口/lib/wog2.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/wog2.json"
     },
     {
       "key": "XYQHAL_Wog3",
@@ -373,7 +373,7 @@
       "type": 3,
       "api": "csp_XYQHikerAL",
       "playerType": 1,
-      "ext": "./玩偶接口/lib/wog3.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/wog3.json"
     },
     {
       "key": "XYQHAL_Wog4",
@@ -381,7 +381,7 @@
       "type": 3,
       "api": "csp_XYQHikerAL",
       "playerType": 1,
-      "ext": "./玩偶接口/lib/wog4.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/wog4.json"
     },
     {
       "key": "XYQHAL_Wog5",
@@ -389,7 +389,7 @@
       "type": 3,
       "api": "csp_XYQHikerAL",
       "playerType": 1,
-      "ext": "./玩偶接口/lib/wog5.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/wog5.json"
     },
     {
       "key": "XYQHAL_Wog6",
@@ -397,7 +397,7 @@
       "type": 3,
       "api": "csp_XYQHikerAL",
       "playerType": 1,
-      "ext": "./玩偶接口/lib/wog6.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/wog6.json"
     },
     {
       "key": "XYQHAL_Wog7",
@@ -405,49 +405,49 @@
       "type": 3,
       "api": "csp_XYQHikerAL",
       "playerType": 1,
-      "ext": "./玩偶接口/lib/wog7.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/wog7.json"
     },
     {
       "key": "XYQH_急救",
       "name": "🚑急救┃技能",
       "type": 3,
       "api": "csp_XYQHiker",
-      "ext": "./玩偶接口/lib/急救.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/急救.json"
     },
     {
       "key": "drpy_企鹅",
       "name": "🐧企鹅┃影视",
       "type": 3,
-      "api": "./玩偶接口/lib/drpy2.min.js",
-      "ext": "./玩偶接口/lib/txtv.js"
+      "api": "./玩偶接口_7aa2b4cb/lib/drpy2.min.js",
+      "ext": "./玩偶接口_7aa2b4cb/lib/txtv.js"
     },
     {
       "key": "drpy_奇异",
       "name": "🥝奇异┃影视",
       "type": 3,
-      "api": "./玩偶接口/lib/drpy2.min.js",
-      "ext": "./玩偶接口/lib/iqytv.js"
+      "api": "./玩偶接口_7aa2b4cb/lib/drpy2.min.js",
+      "ext": "./玩偶接口_7aa2b4cb/lib/iqytv.js"
     },
     {
       "key": "drpy_芒果",
       "name": "🥭忙果┃影视",
       "type": 3,
-      "api": "./玩偶接口/lib/drpy2.min.js",
-      "ext": "./玩偶接口/lib/mgtv.js"
+      "api": "./玩偶接口_7aa2b4cb/lib/drpy2.min.js",
+      "ext": "./玩偶接口_7aa2b4cb/lib/mgtv.js"
     },
     {
       "key": "drpy_优酷",
       "name": "👑优库┃影视",
       "type": 3,
-      "api": "./玩偶接口/lib/drpy2.min.js",
-      "ext": "./玩偶接口/lib/yktv.js"
+      "api": "./玩偶接口_7aa2b4cb/lib/drpy2.min.js",
+      "ext": "./玩偶接口_7aa2b4cb/lib/yktv.js"
     },
     {
       "key": "drpy_菜狗",
       "name": "🐕️菜狗┃影视",
       "type": 3,
-      "api": "./玩偶接口/lib/drpy2.min.js",
-      "ext": "./玩偶接口/lib/sogou.js"
+      "api": "./玩偶接口_7aa2b4cb/lib/drpy2.min.js",
+      "ext": "./玩偶接口_7aa2b4cb/lib/sogou.js"
     },
     {
       "key": "csp_MeijuTT",
@@ -472,7 +472,7 @@
       "name": "🎹音范┃慎用",
       "type": 3,
       "api": "csp_XPath",
-      "ext": "./玩偶接口/lib/音范丝.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/音范丝.json"
     },
     {
       "key": "zycj_暴風",
@@ -743,92 +743,92 @@
       "name": "🦜哔哩┃直播",
       "type": 3,
       "playerType": 1,
-      "api": "./玩偶接口/lib/drpy2.min.js",
-      "ext": "./玩偶接口/lib/哔哩直播.js"
+      "api": "./玩偶接口_7aa2b4cb/lib/drpy2.min.js",
+      "ext": "./玩偶接口_7aa2b4cb/lib/哔哩直播.js"
     },
     {
       "key": "drpy_斗鱼直播",
       "name": "🐬斗鱼┃直播",
       "type": 3,
-      "api": "./玩偶接口/lib/drpy2.min.js",
-      "ext": "./玩偶接口/lib/斗鱼直播.js"
+      "api": "./玩偶接口_7aa2b4cb/lib/drpy2.min.js",
+      "ext": "./玩偶接口_7aa2b4cb/lib/斗鱼直播.js"
     },
     {
       "key": "drpy_虎牙直播",
       "name": "🐯虎牙┃直播",
       "type": 3,
-      "api": "./玩偶接口/lib/drpy2.min.js",
-      "ext": "./玩偶接口/lib/虎牙直播.js"
+      "api": "./玩偶接口_7aa2b4cb/lib/drpy2.min.js",
+      "ext": "./玩偶接口_7aa2b4cb/lib/虎牙直播.js"
     },
     {
       "key": "drpy_酷6",
       "name": "📣酷流┃媒体",
       "type": 3,
-      "api": "./玩偶接口/lib/drpy2.min.js",
-      "ext": "./玩偶接口/lib/酷6网.js"
+      "api": "./玩偶接口_7aa2b4cb/lib/drpy2.min.js",
+      "ext": "./玩偶接口_7aa2b4cb/lib/酷6网.js"
     },
     {
       "key": " XYQH_dj音乐",
       "name": "💃DJ┃摇摆吧",
       "type": 3,
       "api": "csp_XYQHiker",
-      "ext": "./玩偶接口/lib/DJ呦呦.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/DJ呦呦.json"
     },
     {
       "key": " drpy_a8mv",
       "name": "📯A8┃MV",
       "type": 3,
-      "api": "./玩偶接口/lib/drpy2.min.js",
-      "ext": "./玩偶接口/lib/A8音乐.js"
+      "api": "./玩偶接口_7aa2b4cb/lib/drpy2.min.js",
+      "ext": "./玩偶接口_7aa2b4cb/lib/A8音乐.js"
     },
     {
       "key": " drpy_酷奇",
       "name": "📀酷奇┃MV",
       "type": 3,
-      "api": "./玩偶接口/lib/drpy2.min.js",
-      "ext": "./玩偶接口/lib/酷奇MV.js"
+      "api": "./玩偶接口_7aa2b4cb/lib/drpy2.min.js",
+      "ext": "./玩偶接口_7aa2b4cb/lib/酷奇MV.js"
     },
     {
       "key": " drpy_武享吧",
       "name": "🤼‍♂️武享┃秀秀",
       "type": 3,
-      "api": "./玩偶接口/lib/drpy2.min.js",
-      "ext": "./玩偶接口/lib/武享吧.js"
+      "api": "./玩偶接口_7aa2b4cb/lib/drpy2.min.js",
+      "ext": "./玩偶接口_7aa2b4cb/lib/武享吧.js"
     },
     {
       "key": " drpy_88看球",
       "name": "⚽888┃看球",
       "type": 3,
-      "api": "./玩偶接口/lib/drpy2.min.js",
-      "ext": "./玩偶接口/lib/88看球.js"
+      "api": "./玩偶接口_7aa2b4cb/lib/drpy2.min.js",
+      "ext": "./玩偶接口_7aa2b4cb/lib/88看球.js"
     },
     {
       "key": " XYQH_童趣",
       "name": "🧒少儿┃童趣",
       "type": 3,
       "api": "csp_XYQHiker",
-      "ext": "./玩偶接口/lib/童趣.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/童趣.json"
     },
     {
       "key": " XYQH_兔小贝",
       "name": "👶儿童┃启蒙",
       "type": 3,
       "api": "csp_XYQHiker",
-      "ext": "./玩偶接口/lib/兔小贝.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/兔小贝.json"
     },
     {
       "key": " XYQH_小说吧",
       "name": "📢有声┃听书",
       "type": 3,
       "api": "csp_XYQHiker",
-      "ext": "./玩偶接口/lib/有声小说吧.json"
+      "ext": "./玩偶接口_7aa2b4cb/lib/有声小说吧.json"
     },
     {
       "key": " drpy_蜻蜓fm",
       "name": "📻蜻蜓┃FM",
       "type": 3,
-      "api": "./玩偶接口/lib/drpy2.min.js",
-      "ext": "./玩偶接口/lib/蜻蜓FM.js"
+      "api": "./玩偶接口_7aa2b4cb/lib/drpy2.min.js",
+      "ext": "./玩偶接口_7aa2b4cb/lib/蜻蜓FM.js"
     },
     {
       "key": "push_agent",
@@ -1587,7 +1587,7 @@
     "mgtv",
     "wasu"
   ],
-  "spider": "./玩偶接口/XBQH.jar;md5;3ec42e286452fc6c253ffe064eba6eaf",
+  "spider": "./玩偶接口_7aa2b4cb/XBQH.jar;md5;3ec42e286452fc6c253ffe064eba6eaf",
   "wallpaper": "http://www.kf666888.cn/api/tvbox/img",
   "lives": [
     {
