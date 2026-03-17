@@ -1,10 +1,6 @@
 {
   "urls": [
     {
-      "url": "http://宝盒接口.top",
-      "name": "宝盒接口"
-    },
-    {
       "url": "http://影视仓接口.top",
       "name": "影视仓接口"
     },
@@ -13,7 +9,7 @@
       "name": "饭太硬"
     },
     {
-      "url": "https://tvboxsource.vercel.app/sources/玩偶接口_7aa2b4cb.json",
+      "url": "https://gitee.com/blssss/jk/raw/api/bls.json",
       "name": "玩偶接口"
     },
     {
@@ -21,7 +17,7 @@
       "name": "肥猫接口"
     },
     {
-      "url": "https://tvboxsource.vercel.app/sources/天微七星_5595e661.json",
+      "url": "http://7337.kstore.space/qxys/禁止传播.json",
       "name": "天微七星"
     },
     {
@@ -35,6 +31,14 @@
     {
       "url": "http://mzrjk.top/听歌",
       "name": "音乐接口"
+    },
+    {
+      "url": "http://宝盒接口.top",
+      "name": "宝盒接口"
+    },
+    {
+      "url": "https://tvboxsource.vercel.app/sources/老哥接口_528bd162.json",
+      "name": "老哥接口"
     }
   ]
 }
